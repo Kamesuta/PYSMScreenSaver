@@ -8,13 +8,18 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ScreenSaverPhoto
+namespace PYSMViewr
 {
-    public partial class OptionsForm : Form
+    public partial class PYSM : Form
     {
-        public OptionsForm()
+        public PYSM()
         {
             InitializeComponent();
+        }
+
+        private void PYSM_Load(object sender, EventArgs e)
+        {
+
         }
     }
 }

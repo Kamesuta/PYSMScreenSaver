@@ -1,4 +1,4 @@
-﻿namespace ScreenSaverPhoto
+﻿namespace PYSMViewr
 {
     partial class RoundCornerS
     {

@@ -13,9 +13,9 @@ using System.Runtime.InteropServices;
 // リンクのターゲット先取得のため (参照で Windows Script Host Object Model が必要)
 using IWshRuntimeLibrary;
 
-namespace ScreenSaverPhoto
+namespace PYSMViewr
 {
-    public partial class Form1 : Form
+    public partial class PYSMViewer : Form
     {
         #region Preview API's
 
@@ -34,17 +34,16 @@ namespace ScreenSaverPhoto
         #endregion
 
         private bool IsPreviewMode = false;
-        private string[] imageFilePaths = null;
         private Timer timer;
         private Random rand = null;
         
-        public Form1()
+        public PYSMViewer()
             : this(false)
         {
         }
 
         //It is used when in normal mode
-        public Form1(bool debugmode)
+        public PYSMViewer(bool debugmode)
         {
             this.timer = new Timer();
             this.rand = new Random();
@@ -57,8 +56,6 @@ namespace ScreenSaverPhoto
             Cursor.Hide();
             */
 
-            InitializeImageFilePaths();
-
             timer.Interval = 650;
             timer.Tick += new EventHandler(timer_Tick);
             timer.Start();
@@ -66,32 +63,15 @@ namespace ScreenSaverPhoto
 
         private void timer_Tick(object sender, System.EventArgs e)
         {
-            if (imageFilePaths.Length == 0) return;
-
-            var imageFilePath = imageFilePaths[rand.Next(imageFilePaths.Length)];
-            var size = new Size(rand.Next(700), rand.Next(700));
+           var size = new Size(rand.Next(700), rand.Next(700));
             var pos = new Point(rand.Next(Bounds.Width-size.Width), rand.Next(Bounds.Height-size.Height));
-            AddImage(imageFilePath, size, pos);
+            AddImage(size, pos);
             // Move text to new location
             //textLabel.Left = rand.Next(Math.Max(1, Bounds.Width - textLabel.Width));
             //textLabel.Top = rand.Next(Math.Max(1, Bounds.Height - textLabel.Height));
         }
 
-        private void InitializeImageFilePaths() {
-            var pathOfMyPictures = System.Environment.GetFolderPath(Environment.SpecialFolder.MyPictures);
-            //"C:\My Documents"以下のファイルをすべて取得
-            //ワイルドカード"*"は、すべてのファイルを意味する
-            imageFilePaths = GetAllFilesInDir(System.IO.Path.Combine(pathOfMyPictures, "screensaver"), true);
-            //ListBox1に結果を表示する
-            /*
-            foreach (var path in filePaths)
-            {
-                Console.WriteLine(path);
-            }
-            */
-        }
-
-        public void AddImage(string imageFilePath, Size size, Point position)
+        public void AddImage(Size size, Point position)
         {
             var roundCornerBox = new RoundCornerS();
             //TextBox myText = new TextBox();
@@ -107,13 +87,15 @@ namespace ScreenSaverPhoto
                 MyImage.Dispose();
             }
             */
-            var path = imageFilePath;// "D:\\nobuoka\\Pictures\\127e16d38f9dc29c71cee6b01f067cf6.jpeg";
             // Stretches the image to fit the pictureBox.
             pictBox.SizeMode = PictureBoxSizeMode.Zoom;
             try
             {
                 var maxSize = rand.Next(500, 800);
-                var image = new Bitmap(path);
+                // var image = new Bitmap(path);
+
+                var image = Properties.Resources.PYSM;
+
                 var rat = (double)Math.Max(1, Math.Max((double)image.Width / maxSize, (double)image.Height / maxSize));
                 var imageSize = new Size((int)(image.Width / rat), (int)(image.Height / rat));
                 pictBox.Image = (Image)image;
@@ -124,7 +106,7 @@ namespace ScreenSaverPhoto
                 roundCornerBox.ClientSize = imageSize;// new Size(250, 250);
                 roundCornerBox.Location = pos;// new Point(25, 25);
 
-                if (this.Controls.Count > 40)
+                if (this.Controls.Count > 400)
                 {
                     var cont = this.Controls[this.Controls.Count - 1];  //  GetChildIndex(this.Controls.Count - 1);
                     this.Controls.RemoveAt(this.Controls.Count - 1);
@@ -133,17 +115,16 @@ namespace ScreenSaverPhoto
                 this.Controls.Add(roundCornerBox);
                 roundCornerBox.BringToFront();
             }
-            catch (Exception err)
+            catch (Exception)
             {
                 // do nothing
-                // 画像じゃないファイルをあれしようとしてエラーが発生することがある
             }
         }
         
         //This constructor is the handle to the select 
         //screensaver dialog preview window
         //It is used when in preview mode (/p)
-        public Form1(IntPtr PreviewWndHandle)
+        public PYSMViewer(IntPtr PreviewWndHandle)
         {
             InitializeComponent();
  
@@ -215,28 +196,6 @@ namespace ScreenSaverPhoto
             //BackgroundImageLayout = ImageLayout.Stretch;
         }
 
-        // リンクが先祖を参照してると何度も繰り返してしまうので lookLinkTarget が true でも再起呼び出し時は false にする
-        private static string[] GetAllFilesInDir(string dirPath, bool lookLinkTarget)
-        {
-            //"C:\My Documents"以下のファイルをすべて取得
-            //ワイルドカード"*"は、すべてのファイルを意味する
-            var filePaths = new List<string>(System.IO.Directory.GetFiles(dirPath, "*", System.IO.SearchOption.AllDirectories));
-            if (lookLinkTarget)
-            {
-                var paths = new List<string>();
-                foreach (var path in filePaths)
-                {
-                    if (System.IO.Path.GetExtension(path) == ".lnk")
-                    {
-                        var targetPath = GetShortcutTargetFile(path);
-                        paths.AddRange(GetAllFilesInDir(targetPath, false));
-                    }
-                }
-                filePaths.AddRange(paths);
-            }
-            return filePaths.ToArray();
-        }
-
         private static string GetShortcutTargetFile(string shortcutFilePath)
         {
             IWshShell shell = null;         // シェルオブジェクト
@@ -268,57 +227,34 @@ namespace ScreenSaverPhoto
             }
         }
 
+        private bool isActive = false;
+        private Point mouseLocation;
 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
             if (!IsPreviewMode)
             {
-                //Close();
-                //Application.Exit();
-            }
-            /*
-            // Set IsActive and MouseLocation only the first time this event is called.
-            if (!isActive)
-            {
-                mouseLocation = MousePosition;
-                isActive = true;
-            }
-            else
-            {
-                // If the mouse has moved significantly since first call, close.
-                if ((Math.Abs(MousePosition.X - mouseLocation.X) > 10) ||
-                    (Math.Abs(MousePosition.Y - mouseLocation.Y) > 10))
+                // Set IsActive and MouseLocation only the first time this event is called.
+                if (!isActive)
                 {
-                    Close();
+                    mouseLocation = MousePosition;
+                    isActive = true;
+                }
+                else
+                {
+                    // If the mouse has moved significantly since first call, close.
+                    if ((Math.Abs(MousePosition.X - mouseLocation.X) > 10) ||
+                        (Math.Abs(MousePosition.Y - mouseLocation.Y) > 10))
+                    {
+                        Close();
+                        Application.Exit();
+                    }
                 }
             }
-             */
         }
 
         private void Form1_KeyDown(object sender, KeyEventArgs e)
         {
-            /*
-            if (e.KeyCode == (Keys.RButton | Keys.ShiftKey))
-            { ;} // capture the Alt keypress
-            else if (e.KeyCode == Keys.F && e.Alt)
-                isFeedViewShown = !isFeedViewShown;
-            else if (e.KeyCode == Keys.I && e.Alt)
-                isItemsViewShown = !isItemsViewShown;
-            else if (e.KeyCode == Keys.Down)
-            {
-                feedlist.MoveNext();
-                rssDescriptionView.Reset();
-            }
-            else if (e.KeyCode == Keys.Up)
-            {
-                feedlist.MovePrevious();
-                rssDescriptionView.Reset();
-            }
-            else //if(e.KeyCode == Keys.Escape)
-                Close();
-
-            this.Refresh();
-             */
             if (!IsPreviewMode)
             {
                 //Close();

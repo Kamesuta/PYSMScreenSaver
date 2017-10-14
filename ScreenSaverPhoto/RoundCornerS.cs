@@ -19,7 +19,7 @@ using System.Windows.Forms;
 using System.Diagnostics;
 
 // http://hkpr.info/dotnet/RoundCornerS/ より
-namespace ScreenSaverPhoto
+namespace PYSMViewr
 {
     /// <summary>
     /// 角を丸くするコントロール (影付き)

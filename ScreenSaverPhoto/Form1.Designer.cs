@@ -1,6 +1,6 @@
-﻿namespace ScreenSaverPhoto
+﻿namespace PYSMViewr
 {
-    partial class Form1
+    partial class PYSMViewer
     {
         /// <summary>
         /// 必要なデザイナー変数です。
@@ -30,16 +30,16 @@
         {
             this.SuspendLayout();
             // 
-            // Form1
+            // PYSMViewer
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.BackColor = System.Drawing.SystemColors.Control;
+            this.BackColor = System.Drawing.Color.White;
             this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Zoom;
             this.ClientSize = new System.Drawing.Size(788, 451);
             this.DoubleBuffered = true;
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.None;
-            this.Name = "Form1";
+            this.Name = "PYSMViewer";
             this.Opacity = 0.9D;
             this.ShowInTaskbar = false;
             this.WindowState = System.Windows.Forms.FormWindowState.Maximized;

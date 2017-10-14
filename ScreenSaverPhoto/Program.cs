@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace ScreenSaverPhoto
+namespace PYSMViewr
 {
     static class Program
     {
@@ -51,7 +51,7 @@ namespace ScreenSaverPhoto
                                 return;
                             }
                             IntPtr previewWndHandle = new IntPtr(long.Parse(secondArgument));
-                            Application.Run(new Form1(previewWndHandle));
+                            Application.Run(new PYSMViewer(previewWndHandle));
                             break;
                         case "/s":
                             // Show screensaver form
@@ -82,7 +82,7 @@ namespace ScreenSaverPhoto
 
         static void ShowOptions()
         {
-            OptionsForm optionsForm = new OptionsForm();
+            PYSM optionsForm = new PYSM();
             Application.Run(optionsForm);
         }
 
@@ -98,7 +98,7 @@ namespace ScreenSaverPhoto
                 //Form1 screensaver = new Form1(screen.Bounds);
                 //screensaver.Show();
             }
-            Form1 screenSaver = new Form1(debugmode);
+            PYSMViewer screenSaver = new PYSMViewer(debugmode);
             Application.Run(screenSaver);
         }
     }
