@@ -1,3 +1,3 @@
-# ScreenSaverPhoto
+# PYSMScreenSaver
 
-画像をランダムに表示するスクリーンセーバー
+そりでわ、無限に練りをしまつ ぽやしみスクリーンセーバー
